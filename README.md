@@ -1,11 +1,20 @@
 # Massaging-Plugin-Backend
+
 Massaging Plugin Backend
 
-```npm i```
+`npm i`
 
-```npm start```
+`npm start`
 
-```PORT=3000```
+`PORT=3000`
+
+### End Points
 
 health check
-```/api```
+`/api`
+
+signup
+`/api/signup`
+
+signin
+`api/signin`
