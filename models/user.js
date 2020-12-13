@@ -38,11 +38,9 @@ const userSchema = mongoose.Schema(
     },
     headline: {
       type: String,
-      required: true,
     },
     about: {
       type: String,
-      required: true,
     },
 
     //Base-64 encoded display picture
@@ -71,11 +69,6 @@ const userSchema = mongoose.Schema(
       discord: {
         type: String,
       },
-    },
-
-    socialHandle: {
-      type: [String],
-      default: [],
     },
 
     converations: [
