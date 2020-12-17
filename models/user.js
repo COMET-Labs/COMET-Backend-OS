@@ -70,15 +70,6 @@ const userSchema = mongoose.Schema(
         type: String,
       },
     },
-
-    converations: [
-      {
-        conversationID: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Conversations",
-        },
-      },
-    ],
   },
   { timestamps: true }
 );
