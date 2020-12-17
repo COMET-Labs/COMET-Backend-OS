@@ -17,4 +17,4 @@ signup
 `/api/signup`
 
 signin
-`api/signin`
+`/api/signin`
