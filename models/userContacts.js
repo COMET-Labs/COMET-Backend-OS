@@ -7,11 +7,18 @@ const contactsSchema = mongoose.Schema(
       ref: "user",
       contacts: [
         {
+          clubId: mongoose.Schema.Types.ObjectId,
+          ref: "club",
+          clubName: String,
+        },
+      ],
+      /* contacts: [
+        {
           contactId: mongoose.Schema.Types.ObjectId,
           ref: "user",
           contactName: String,
         },
-      ],
+      ], */
     },
   },
   { timestamps: true }
