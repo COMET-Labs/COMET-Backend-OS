@@ -1,7 +1,7 @@
 const Message = require("../models/message");
 
 // For Fething Past Messages
-exports.pastMessage = (req, res) => {
+exports.pastMessages = (req, res) => {
   Message.find({ recieverClub: req.body.clubId })
     .sort({ createdAt: -1 })
     .then((user) => {
