@@ -1,10 +1,12 @@
 const mongoose = require("mongoose");
 
 const contactsSchema = mongoose.Schema(
-  {
-    user: {
-      userId: mongoose.Schema.Types.ObjectId,
-      ref: "user",
+  //{
+   // user: {
+      userId:{
+         type: mongoose.Schema.Types.ObjectId,
+         ref: "user",
+      }
       contacts: [
         {
           clubId: mongoose.Schema.Types.ObjectId,
@@ -19,8 +21,7 @@ const contactsSchema = mongoose.Schema(
           contactName: String,
         },
       ], */
-    },
-  },
+    
   { timestamps: true }
 );
 module.exports = mongoose.model("usercontacts", contactsSchema);
