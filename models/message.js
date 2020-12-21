@@ -6,7 +6,7 @@ const messageSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
     },
-    content: {
+    messageBody: {
       type: String,
     },
     recieverClub: {
