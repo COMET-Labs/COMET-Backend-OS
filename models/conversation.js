@@ -1,3 +1,5 @@
+// No need of this schema For Messaging Api
+
 const mongoose = require("mongoose");
 
 const conversationSchema = mongoose.Schema(
