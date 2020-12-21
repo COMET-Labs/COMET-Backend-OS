@@ -9,10 +9,14 @@ const messageSchema = mongoose.Schema(
     content: {
       type: String,
     },
-    conversationId: {
+    recieverClub: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "club",
+    },
+    /* conversationId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "conversations",
-    },
+    }, */
   },
   { timestamps: true }
 );
