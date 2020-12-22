@@ -46,6 +46,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use("/api", require("./routes/api"));
 app.use("/api", require("./routes/auth"));
+app.use("/api", require("./routes/clubs"));
 app.use("/api", require("./routes/messages"));
 
 app.use((err, req, res, next) => {
