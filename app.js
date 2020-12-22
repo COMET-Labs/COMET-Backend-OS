@@ -26,12 +26,15 @@ const connectWithRetry = (uris, options, maxAttempts = 5) => {
   });
 };
 
-connectWithRetry(URI, {
-  useNewUrlParser: true,
-  useFindAndModify: false,
-  useCreateIndex: true,
-  useUnifiedTopology: true,
-});
+connectWithRetry(
+  URI,
+  {
+    useNewUrlParser: true,
+    useFindAndModify: false,
+    useCreateIndex: true,
+    useUnifiedTopology: true,
+  }
+);
 
 var app = express();
 
@@ -43,6 +46,8 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use("/api", require("./routes/api"));
 app.use("/api", require("./routes/auth"));
+app.use("/api", require("./routes/clubs"));
+app.use("/api", require("./routes/messages"));
 
 app.use((err, req, res, next) => {
   console.error(err);

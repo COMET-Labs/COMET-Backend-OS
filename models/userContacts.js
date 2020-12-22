@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 
 const contactsSchema = mongoose.Schema(
   {
-    // user: {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
@@ -17,14 +16,6 @@ const contactsSchema = mongoose.Schema(
         },
       ],
     },
-    /* contacts: [
-        {
-          contactId: mongoose.Schema.Types.ObjectId,
-          ref: "user",
-          contactName: String,
-        },
-      ], */
-    // },
   },
   { timestamps: true }
 );

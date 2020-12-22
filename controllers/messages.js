@@ -1,7 +1,7 @@
 const Message = require("../models/message");
 
 // For Fething Past Messages
-exports.pastMessages = (req, res) => {
+exports.past_message = (req, res) => {
   Message.find({ recieverClub: req.body.clubId })
     .sort({ createdAt: -1 })
     .then((user) => {
@@ -13,8 +13,8 @@ exports.pastMessages = (req, res) => {
 };
 
 // For Saving and Emiting new Message
-exports.newNessages = (req, res) => {
-  const senderId = req.body.user;
+exports.new_message = (req, res) => {
+  const senderId = req.user._id;
   const messageBody = req.body.messageBody;
   const recieverClub = req.body.recieverClub;
 
