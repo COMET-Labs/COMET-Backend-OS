@@ -6,16 +6,13 @@ const contactsSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
     },
-    contacts: {
-      type: [
-        {
-          clubId: {
+    //contacts is an array of club id in which user is enroled in...
+    contacts:[     
+          {
             type: mongoose.Schema.Types.ObjectId,
             ref: "club",
-          },
-        },
+          }
       ],
-    },
   },
   { timestamps: true }
 );
