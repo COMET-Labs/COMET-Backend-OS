@@ -13,10 +13,6 @@ const messageSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "club",
     },
-    /* conversationId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "conversations",
-    }, */
   },
   { timestamps: true }
 );
