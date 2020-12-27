@@ -13,4 +13,3 @@ router.post("/insert_star", requireSignin, insertStar);
 router.post("/delete_star", requireSignin, deleteStar);
 
 module.exports = router;
-

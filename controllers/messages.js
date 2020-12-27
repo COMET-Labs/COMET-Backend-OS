@@ -56,6 +56,7 @@ exports.insertStar = (req, res) => {
     .catch((error) => res.json(error));
 };
 
+
 exports.deleteStar = (req, res) => {
   const messageId = req.body.messageId;
   Message.updateOne({
@@ -69,3 +70,4 @@ exports.deleteStar = (req, res) => {
       }).exec().then(response => res.json(response)).catch(error => res.json(error));
       
 };
+
