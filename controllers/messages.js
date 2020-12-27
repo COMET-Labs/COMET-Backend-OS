@@ -37,3 +37,35 @@ exports.new_message = (req, res) => {
     }
   });
 };
+
+// Adding star to the message
+exports.insertStar = (req, res) => {
+  const messageId = req.body.messageId;
+  Message.updateOne(
+    {
+      _id: messageId,
+    },
+    {
+      $addToSet: {
+        star: req.user._id,
+      },
+    }
+  )
+    .exec()
+    .then((response) => res.json(response))
+    .catch((error) => res.json(error));
+};
+
+exports.deleteStar = (req, res) => {
+  const messageId = req.body.messageId;
+  Message.updateOne({
+    _id: messageId
+    // userId: req.body.userId
+      },
+      {
+        $pull: {
+          star: req.body.userId
+        }
+      }).exec().then(response => res.json(response)).catch(error => res.json(error));
+      
+};
