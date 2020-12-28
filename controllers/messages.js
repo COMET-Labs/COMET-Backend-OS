@@ -1,4 +1,13 @@
 const Message = require("../models/message");
+const socket_io = require("socket.io");
+var io = socket_io();
+
+const changeStream = Message.watch();
+
+changeStream.on("change", (change) => {
+  console.log(change); // You could parse out the needed info and send only that data.
+  io.emit("changeData", change);
+});
 
 // For Fething Past Messages
 exports.past_message = (req, res) => {
@@ -40,26 +49,20 @@ exports.new_message = (req, res) => {
 
 exports.delete_message = (req, res) => {
   const senderId = req.user._id;
-  const messageId = req.body.messageId
+  const messageId = req.body.messageId;
 
-  Message.findOne({ _id : messageId }).exec((error, message) => {
-    if (message){
-       if(message.senderId === senderId){
-            Message.deleteOne({_id : messageId}).exec((error, message) => {
-              if(error) return res.json({message : "Something Went Wrong !"}) 
-              return res.json({message : "You Deleted the Message"});
-            })
-       }
-       else {
-        return res.json({message : "You Don't Have Permission"});
-       }
-    }
-    else 
-      return res
-        .status(400)
-        .json({ message: "Something went Wrong" });
+  Message.findOne({ _id: messageId }).exec((error, message) => {
+    if (message) {
+      if (message.senderId === senderId) {
+        Message.deleteOne({ _id: messageId }).exec((error, message) => {
+          if (error) return res.json({ message: "Something Went Wrong !" });
+          return res.json({ message: "You Deleted the Message" });
+        });
+      } else {
+        return res.json({ message: "You Don't Have Permission" });
+      }
+    } else return res.status(400).json({ message: "Something went Wrong" });
   });
-  
 };
 
 // Adding star to the message
@@ -80,18 +83,20 @@ exports.insertStar = (req, res) => {
     .catch((error) => res.json(error));
 };
 
-
 exports.deleteStar = (req, res) => {
   const messageId = req.body.messageId;
-  Message.updateOne({
-    _id: messageId
-    // userId: req.body.userId
+  Message.updateOne(
+    {
+      _id: messageId,
+      // userId: req.body.userId
+    },
+    {
+      $pull: {
+        star: req.body.userId,
       },
-      {
-        $pull: {
-          star: req.body.userId
-        }
-      }).exec().then(response => res.json(response)).catch(error => res.json(error));
-      
+    }
+  )
+    .exec()
+    .then((response) => res.json(response))
+    .catch((error) => res.json(error));
 };
-
