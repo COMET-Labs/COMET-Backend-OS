@@ -38,6 +38,30 @@ exports.new_message = (req, res) => {
   });
 };
 
+exports.delete_message = (req, res) => {
+  const senderId = req.user._id;
+  const messageId = req.body.messageId
+
+  Message.findOne({ _id : messageId }).exec((error, message) => {
+    if (message){
+       if(message.senderId === senderId){
+            Message.deleteOne({_id : messageId}).exec((error, message) => {
+              if(error) return res.json({message : "Something Went Wrong !"}) 
+              return res.json({message : "You Deleted the Message"});
+            })
+       }
+       else {
+        return res.json({message : "You Don't Have Permission"});
+       }
+    }
+    else 
+      return res
+        .status(400)
+        .json({ message: "Something went Wrong" });
+  });
+  
+};
+
 // Adding star to the message
 exports.insertStar = (req, res) => {
   const messageId = req.body.messageId;
