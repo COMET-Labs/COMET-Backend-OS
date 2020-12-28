@@ -23,14 +23,38 @@ exports.myClubs = (req, res) => {
 
 exports.addMyClub = (req, res) => {
   const clubId = req.body.clubId;
-  usercontacts.updateOne({
-    userId: req.user._id
-    // userId: req.body.userId
+  usercontacts
+    .updateOne(
+      {
+        userId: req.user._id,
+        // userId: req.body.userId
       },
       {
         $addToSet: {
-          contacts: req.body.clubId
-        }
-      }).exec().then(response => res.json(response)).catch(error => res.json(error));
-      
-    };
+          contacts: req.body.clubId,
+        },
+      }
+    )
+    .exec()
+    .then((response) => res.json(response))
+    .catch((error) => res.json(error));
+};
+
+exports.deleteMyClub = (req, res) => {
+  const clubId = req.body.clubId;
+  usercontacts
+    .updateOne(
+      {
+        userId: req.user._id,
+        // userId: req.body.userId
+      },
+      {
+        $pull: {
+          contacts: req.body.clubId,
+        },
+      }
+    )
+    .exec()
+    .then((response) => res.json(response))
+    .catch((error) => res.json(error));
+};
