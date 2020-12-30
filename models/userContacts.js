@@ -2,17 +2,17 @@ const mongoose = require("mongoose");
 
 const contactsSchema = mongoose.Schema(
   {
-    user: {
-      userId: mongoose.Schema.Types.ObjectId,
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
       ref: "user",
-      contacts: [
-        {
-          contactId: mongoose.Schema.Types.ObjectId,
-          ref: "user",
-          contactName: String,
-        },
-      ],
     },
+    //contacts is an array of club id in which user is enroled in...
+    contacts:[     
+          {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "club",
+          }
+      ],
   },
   { timestamps: true }
 );

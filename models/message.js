@@ -6,13 +6,19 @@ const messageSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
     },
-    content: {
+    messageBody: {
       type: String,
     },
-    conversationId: {
+    recieverClub: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "conversations",
+      ref: "club",
     },
+    star: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "user",
+      },
+    ],
   },
   { timestamps: true }
 );
