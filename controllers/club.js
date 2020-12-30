@@ -5,7 +5,6 @@ exports.myClubs = (req, res) => {
   usercontacts
     .findOne({
       userId: req.user._id,
-      // userId: req.body.userId,
     })
     .exec((error, userData) => {
       if (error) {
@@ -27,7 +26,6 @@ exports.addMyClub = (req, res) => {
     .updateOne(
       {
         userId: req.user._id,
-        // userId: req.body.userId
       },
       {
         $addToSet: {
@@ -46,7 +44,6 @@ exports.deleteMyClub = (req, res) => {
     .updateOne(
       {
         userId: req.user._id,
-        // userId: req.body.userId
       },
       {
         $pull: {

@@ -26,15 +26,12 @@ const connectWithRetry = (uris, options, maxAttempts = 5) => {
   });
 };
 
-connectWithRetry(
-  URI,
-  {
-    useNewUrlParser: true,
-    useFindAndModify: false,
-    useCreateIndex: true,
-    useUnifiedTopology: true,
-  }
-);
+connectWithRetry(URI, {
+  useNewUrlParser: true,
+  useFindAndModify: false,
+  useCreateIndex: true,
+  useUnifiedTopology: true,
+});
 
 var app = express();
 
