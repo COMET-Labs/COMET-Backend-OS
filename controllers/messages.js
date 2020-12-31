@@ -1,20 +1,5 @@
 const Message = require("../models/message");
 
-// For Validating Messaging Api Remove Socket-Io Part (4-16)
-const socket_io = require("socket.io");
-var io = socket_io();
-
-const changeStream = Message.watch();
-
-changeStream.on("NewMessage", (change) => {
-  console.log(change); // You could parse out the needed info and send only that data.
-  io.emit("NewMessage", change);
-});
-
-io.on('connection', function () {
-  console.log('connected');
-});
-
 // For Fething Past Messages
 exports.past_message = (req, res) => {
   Message.find({ recieverClub: req.body.clubId })
@@ -94,7 +79,6 @@ exports.deleteStar = (req, res) => {
   Message.updateOne(
     {
       _id: messageId,
-      // userId: req.body.userId
     },
     {
       $pull: {
