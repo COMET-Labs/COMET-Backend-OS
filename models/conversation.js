@@ -6,7 +6,7 @@ const conversationSchema = mongoose.Schema(
   {
     participants: [
       {
-        id: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
+        id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
       },
     ],
   },
