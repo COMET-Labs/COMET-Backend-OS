@@ -41,7 +41,7 @@ exports.newComment = (req, res) => {
                         return res.status(400).json({ error: "Something went wrong" });
                     }
                     if (data) {
-                        return res.status(200).json({ "Your comment has been successfully added."});
+                        return res.status(200).json({ message: "Your comment has been successfully added." });
                     }
                 });
         }
@@ -63,7 +63,7 @@ exports.updateComment = (req, res) => {
                 return res.status(400).json({ error: "Something went wrong" });
             }
             if (data) {
-                return res.status(200).json({ "Your comment has been successfully updated."});
+                return res.status(200).json({ message: "Your comment has been successfully updated." });
             }
         });
 }
@@ -71,10 +71,7 @@ exports.updateComment = (req, res) => {
 exports.deleteComment = (req, res) => {
     const { commentId, messageId } = req.body;
 
-    Message.updateOne(
-        { _id: messageId },
-        { $pull: { comments: { _id: commentId } } },
-    )
+    Message.findByIdAndUpdate(messageId, { $pull: { comments: commentId } })
         .exec((error, data) => {
             if (error) {
                 return res.status(400).json({ error: "Something went wrong" });
@@ -87,7 +84,7 @@ exports.deleteComment = (req, res) => {
                             return res.status(400).json({ error: "Something went wrong" });
                         }
                         if (data) {
-                            return res.status(200).json({ "Your comment has been successfully deleted." });
+                            return res.status(200).json({ message: "Your comment has been successfully deleted." });
                         }
                     });
             }

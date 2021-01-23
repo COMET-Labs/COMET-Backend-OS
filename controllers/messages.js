@@ -1,4 +1,5 @@
 const Message = require("../models/message");
+const Comment = require("../models/comment");
 
 // For Fetching Past Messages
 exports.past_message = (req, res) => {
@@ -44,11 +45,16 @@ exports.delete_message = (req, res) => {
 
   Message.findOne({ _id: messageId }).exec((error, message) => {
     if (message) {
-      if (message.senderId === senderId) {
-        Message.deleteOne({ _id: messageId }).exec((error, message) => {
-          if (error) return res.json({ message: "Something Went Wrong !" });
-          return res.json({ message: "You Deleted the Message" });
-        });
+      if (message.senderId.toString() === senderId) {
+        Comment.deleteMany({ _id: { $in: message.comments } })
+          .exec((error, data) => {
+            if (error) return res.json({ message: "Something Went Wrong !" });
+            Message.deleteOne({ _id: messageId })
+              .exec((error, data) => {
+                if (error) return res.json({ message: "Something Went Wrong !" });
+                return res.json({ message: "You Deleted the Message" });
+              });
+          });
       } else {
         return res.json({ message: "You Don't Have Permission" });
       }
