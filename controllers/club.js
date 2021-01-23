@@ -1,8 +1,8 @@
-const usercontacts = require("../models/userContacts");
+const Usercontact = require("../models/userContacts");
 const club = require("../models/club");
 
 exports.myClubs = (req, res) => {
-  usercontacts
+  Usercontact
     .findOne({
       userId: req.user._id,
     })
@@ -22,7 +22,7 @@ exports.myClubs = (req, res) => {
 
 exports.addMyClub = (req, res) => {
   const clubId = req.body.clubId;
-  usercontacts
+  Usercontact
     .updateOne(
       {
         userId: req.user._id,
@@ -40,7 +40,7 @@ exports.addMyClub = (req, res) => {
 
 exports.deleteMyClub = (req, res) => {
   const clubId = req.body.clubId;
-  usercontacts
+  Usercontact
     .updateOne(
       {
         userId: req.user._id,
