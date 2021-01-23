@@ -6,9 +6,13 @@ const commentSchema = mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
         },
-        messageBody: {
+        commentBody: {
             type: String,
         },
+        isEdited: {
+            type: Boolean,
+            default: false,
+        }
     },
     { timestamps: true }
 );
