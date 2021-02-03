@@ -20,7 +20,7 @@ const userSchema = mongoose.Schema(
       institute: {
         type: String,
         trim: true,
-        // unique: 1,
+        unique: 1,
       },
       personal: {
         type: String,

@@ -15,6 +15,12 @@ const clubSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    mentors: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   { timestamps: true }
 );
