@@ -9,7 +9,7 @@ const {
 
 router.post("/new_message", requireSignin, MessageValidated, isMessageValidated, new_message);
 router.post("/past_message", requireSignin, past_message);
-router.post("/delete_message", requireSignin, delete_message);
+router.post("/delete_message",requireSignin, delete_message);
 router.post("/insert_star", requireSignin, insertStar);
 router.post("/delete_star", requireSignin, deleteStar);
 
