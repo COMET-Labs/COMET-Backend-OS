@@ -27,6 +27,12 @@ const clubSchema = mongoose.Schema(
         ref: "User",
       },
     ],
+    banned: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   { timestamps: true }
 );
