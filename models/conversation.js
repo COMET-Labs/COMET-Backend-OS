@@ -6,10 +6,10 @@ const conversationSchema = mongoose.Schema(
   {
     participants: [
       {
-        id: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
+        id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
       },
     ],
   },
   { timestamps: true }
 );
-module.exports = mongoose.model("conversations", conversationSchema);
+module.exports = mongoose.model("Conversation", conversationSchema);

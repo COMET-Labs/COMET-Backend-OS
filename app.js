@@ -13,8 +13,7 @@ const connectWithRetry = (uris, options, maxAttempts = 5) => {
     if (err)
       if (connectWithRetry.timeout <= (maxAttempts - 1) * 5000) {
         console.error(
-          `Failed to connect to mongo on startup - retrying in ${
-            (connectWithRetry.timeout += 5000) / 1000
+          `Failed to connect to mongo on startup - retrying in ${(connectWithRetry.timeout += 5000) / 1000
           } sec`,
           connectWithRetry.previousError != "" + err
             ? `\n${(connectWithRetry.previousError = err)}`
@@ -45,6 +44,7 @@ app.use("/api", require("./routes/api"));
 app.use("/api", require("./routes/auth"));
 app.use("/api", require("./routes/clubs"));
 app.use("/api", require("./routes/messages"));
+app.use("/api", require("./routes/comment"));
 
 app.use((err, req, res, next) => {
   console.error(err);
