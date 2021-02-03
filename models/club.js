@@ -21,6 +21,12 @@ const clubSchema = mongoose.Schema(
         ref: "User",
       },
     ],
+    moderators: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   { timestamps: true }
 );
