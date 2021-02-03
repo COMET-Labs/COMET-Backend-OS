@@ -43,7 +43,7 @@ exports.new_message = (req, res) => {
 exports.delete_message = (req, res) => {
   const senderId = req.user._id;
   const messageId = req.body.messageId;
-  
+
   Message.findOne({ _id: messageId }).exec((error, message) => {
     if (message) {
       if (message.senderId.toString() === senderId) {
@@ -56,42 +56,62 @@ exports.delete_message = (req, res) => {
             });
           }
         );
-      } else if(message){
-        Club.findOne({ _id: message.recieverClub.toString()}).exec(
+      } else if (message) {
+        Club.findOne({ _id: message.recieverClub.toString() }).exec(
           (clubError, clubDetails) => {
             if (clubDetails) {
-              clubDetails.mentors.find(function () {
-                clubDetails.mentors.forEach(function (entry) {
-                  if (entry.toString() === senderId) {
-                    Comment.deleteMany({ _id: { $in: message.comments } }).exec(
-                      (error, data) => {
-                        if (error)
-                          return res.json({ message: "Something Went Wrong !" });
-                        Message.deleteOne({ _id: messageId }).exec(
-                          (error, data) => {
-                            if (error)
-                              return res.json({
-                                message: "Something Went Wrong !",
-                              });
-                            return res.json({ message: "You Deleted the Message" });
-                          }
-                        );
-                      }
-                    );
-                  }else{
-                    return res.json({ message: "Not a mentor" });
-                  }
-                });
-                
+              var isfound = false;
+              clubDetails.mentors.forEach(function (entry) {
+                if (entry.toString() === senderId) {
+                  isfound = true;
+                  Comment.deleteMany({ _id: { $in: message.comments } }).exec(
+                    (error, data) => {
+                      if (error)
+                        return res.json({ message: "Something Went Wrong !" });
+                      Message.deleteOne({ _id: messageId }).exec(
+                        (error, data) => {
+                          if (error)
+                            return res.json({
+                              message: "Something Went Wrong !",
+                            });
+                          return res.json({
+                            message: "You Deleted the Message",
+                          });
+                        }
+                      );
+                    }
+                  );
+                }
               });
-              
+              clubDetails.moderators.forEach(function (entry) {
+                if (entry.toString() === senderId) {
+                  isfound = true;
+                  Comment.deleteMany({ _id: { $in: message.comments } }).exec(
+                    (error, data) => {
+                      if (error)
+                        return res.json({ message: "Something Went Wrong !" });
+                      Message.deleteOne({ _id: messageId }).exec(
+                        (error, data) => {
+                          if (error)
+                            return res.json({
+                              message: "Something Went Wrong !",
+                            });
+                          return res.json({
+                            message: "You Deleted the Message",
+                          });
+                        }
+                      );
+                    }
+                  );
+                }
+              });
+              if (!isfound)
+                return res.json({ message: "You Don't Have Permission :)" });
             }
           }
         );
-
-        
-      }else{
-        return res.json({ message: "You Don't Have Permission" });
+      } else {
+        return res.json({ message: "You Don't Have Permission :)" });
       }
     } else return res.status(400).json({ message: "Something went Wrong" });
   });
