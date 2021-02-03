@@ -18,4 +18,4 @@ const clubSchema = mongoose.Schema(
   },
   { timestamps: true }
 );
-module.exports = mongoose.model("club", clubSchema);
+module.exports = mongoose.model("Club", clubSchema);
