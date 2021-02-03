@@ -55,3 +55,77 @@ exports.deleteMyClub = (req, res) => {
     .then((response) => res.json(response))
     .catch((error) => res.json(error));
 };
+
+exports.banMyClub = (req, res) => {
+  const clubId = req.body.clubId;
+  const banId = req.body.banId;
+  Club.findOne({ _id: message.recieverClub.toString() }).exec(
+    (clubError, clubDetails) => {
+      if (clubDetails) {
+          var isfound = false;
+          clubDetails.mentors.forEach(function (entry) {
+            if (entry.toString() === senderId) {
+              isfound = true;
+              Club
+            .updateOne(
+              {
+                _id : clubId,
+              },
+              {
+                $addToSet: {
+                  banned : banId,
+                },
+              }
+            )
+          Usercontact
+            .updateOne(
+              {
+                userId: req.user._id,
+              },
+              {
+                $pull: {
+                  contacts: req.body.clubId,
+                },
+              }
+            )
+            .exec()
+            .then((response) => res.json(response))
+            .catch((error) => res.json(error));
+            }
+          });
+          clubDetails.moderators.forEach(function (entry) {
+            if (entry.toString() === senderId) {
+              isfound = true;
+              Club
+            .updateOne(
+              {
+                _id : clubId,
+              },
+              {
+                $addToSet: {
+                  banned : banId,
+                },
+              }
+            )
+          Usercontact
+            .updateOne(
+              {
+                userId: req.user._id,
+              },
+              {
+                $pull: {
+                  contacts: req.body.clubId,
+                },
+              }
+            )
+            .exec()
+            .then((response) => res.json(response))
+            .catch((error) => res.json(error));
+            }
+          });
+          if (!isfound)
+            return res.json({ message: "You Don't Have Permission :)" });
+        }
+      }).catch((error) => res.json("Something Went Wrong"));
+};
+
