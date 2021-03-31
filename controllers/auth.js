@@ -1,5 +1,15 @@
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
+const axios = require("axios").default;
+var AWS = require("aws-sdk");
+
+AWS.config.update({
+  region: process.env.region,
+  accessKeyId: process.env.accessKeyId,
+  secretAccessKey: process.env.secretAccessKey,
+});
+
+var docClient = new AWS.DynamoDB.DocumentClient();
 
 exports.signup = (req, res) => {
   User.findOne({ email: req.body.email }).exec((error, user) => {
@@ -99,3 +109,51 @@ exports.signin = (req, res) => {
     }
   });
 };
+
+exports.mailOtp = async (req, res) => {
+  const response = await axios.post(
+    "https://66ec05ryyl.execute-api.us-east-2.amazonaws.com/getOtpFromEmail",
+    { email_id: req.body.email }
+  );
+  if (response.data.statusCode === 200) {
+    res.status(200).json({
+      success: "OTP sent",
+    });
+  } else {
+    res.status(200).json({
+      error: "Error in mailing OTP",
+    });
+  }
+};
+
+exports.verifyOtp = async (req, res) => {
+  var params = {
+    TableName: "otp",
+    Key: {
+      email_id: req.body.email,
+    },
+  };
+  docClient.get(params, function (err, data) {
+    if (err) {
+      res.status(200).json({
+        error: "Expired or Incorrect OTP",
+      });
+    } else {
+      if (data && data.Item && data.Item.otp === req.body.otp) {
+        res.status(200).json({
+          success: "OTP is Correct",
+        });   
+      } else {
+        res.status(200).json({
+          error: "Expired or Incorrect OTP",
+        });
+      }
+    }
+  });
+};
+
+exports.isIiitian = (req,res,next) => {
+  // more logic will be added later
+  next();
+};
+
