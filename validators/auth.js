@@ -9,6 +9,15 @@ exports.validateSignupRequest = [
   check("contact").notEmpty().withMessage("Contact number is required"),
 ];
 
+exports.validateMailRequest = [
+  check("email").isEmail().withMessage("Enter email")
+]
+
+exports.validateOtpRequest = [
+  check("email").isEmail().withMessage("Enter email"),
+  check("otp").notEmpty().withMessage("Enter OTP")
+]
+
 exports.validateSigninRequest = [
   check("email").isEmail().withMessage("Enter email"),
   check("password")
