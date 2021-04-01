@@ -1,22 +1,39 @@
 const express = require("express");
 const router = express.Router();
-const { signup, signin, mailOtp, verifyOtp, isIiitian } = require("../controllers/auth");
+const {
+  mailOtp,
+  verifyOtp,
+  isIiitian,
+  loginWithPassword,
+  isAuthenticated,
+  logout,
+} = require("../controllers/auth");
 const {
   validateMailRequest,
   validateOtpRequest,
-  validateSignupRequest,
   isRequestValidated,
-  validateSigninRequest,
+  validateLoginWithPassword,
 } = require("../validators/auth");
 
 router.post("/mailotp", validateMailRequest, isRequestValidated, mailOtp);
 
 router.post("/verifyotp", validateOtpRequest, isRequestValidated, verifyOtp);
 
-router.post("/verifyiiitianemail", validateMailRequest, isRequestValidated, isIiitian, mailOtp)
+router.post(
+  "/verifyiiitianemail",
+  validateMailRequest,
+  isRequestValidated,
+  isIiitian,
+  mailOtp
+);
 
-router.post("/signup", validateSignupRequest, isRequestValidated, signup);
+router.post(
+  "/loginwithpassword",
+  validateLoginWithPassword,
+  isRequestValidated,
+  loginWithPassword
+);
 
-router.post("/signin", validateSigninRequest, isRequestValidated, signin);
+router.post("/logout", isAuthenticated, logout);
 
 module.exports = router;
