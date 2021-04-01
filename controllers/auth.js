@@ -11,45 +11,53 @@ AWS.config.update({
 var docClient = new AWS.DynamoDB.DocumentClient();
 
 exports.mailOtp = async (req, res) => {
-  const response = await axios.post(
-    "https://66ec05ryyl.execute-api.us-east-2.amazonaws.com/getOtpFromEmail",
-    { email_id: req.body.email }
-  );
-  if (response.data.statusCode === 200) {
-    res.status(200).json({
-      success: "OTP sent",
-    });
-  } else {
-    res.status(200).json({
-      error: "Error in mailing OTP",
-    });
+  try {
+    const response = await axios.post(
+      "https://66ec05ryyl.execute-api.us-east-2.amazonaws.com/getOtpFromEmail",
+      { email_id: req.body.email }
+    );
+    if (response.data.statusCode === 200) {
+      res.status(200).json({
+        success: "OTP sent",
+      });
+    } else {
+      res.status(200).json({
+        error: "Error in mailing OTP",
+      });
+    }
+  } catch (err) {
+    next({ status: 400 });
   }
 };
 
 exports.verifyOtp = (req, res) => {
-  var params = {
-    TableName: "otp",
-    Key: {
-      email_id: req.body.email,
-    },
-  };
-  docClient.get(params, function (err, data) {
-    if (err) {
-      res.status(200).json({
-        error: "Expired or Incorrect OTP",
-      });
-    } else {
-      if (data && data.Item && data.Item.otp === req.body.otp) {
-        res.status(200).json({
-          success: "OTP is Correct",
-        });
-      } else {
+  try {
+    var params = {
+      TableName: "otp",
+      Key: {
+        email_id: req.body.email,
+      },
+    };
+    docClient.get(params, function (err, data) {
+      if (err) {
         res.status(200).json({
           error: "Expired or Incorrect OTP",
         });
+      } else {
+        if (data && data.Item && data.Item.otp === req.body.otp) {
+          res.status(200).json({
+            success: "OTP is Correct",
+          });
+        } else {
+          res.status(200).json({
+            error: "Expired or Incorrect OTP",
+          });
+        }
       }
-    }
-  });
+    });
+  } catch (err) {
+    next({ status: 400 });
+  }
 };
 
 exports.isIiitian = (req, res, next) => {
@@ -58,26 +66,159 @@ exports.isIiitian = (req, res, next) => {
 };
 
 exports.loginWithPassword = (req, res) => {
-  let params = {
-    TableName: "Users",
-    Key: {
-      personalEmail: req.body.email,
-    },
-  };
-  docClient.get(params, function (err, data) {
-    if (err) {
-      res.status(200).json({
-        error: "Some error occured",
+  try {
+    let params = {
+      TableName: "Users",
+      Key: {
+        personalEmail: req.body.email,
+      },
+    };
+    docClient.get(params, function (err, data) {
+      if (err) {
+        res.status(200).json({
+          error: "Some error occured",
+        });
+      } else {
+        if (data && data.Item) {
+          const hash = "hash"; // will be replaced by function soon
+          if (
+            data.Item.passwordLess === false &&
+            data.Item.hashPassword === hash
+          ) {
+            const accessToken = jwt.sign(
+              { email: req.body.email },
+              process.env.JWT_SECRET,
+              {
+                expiresIn: req.body.remember === true ? "30d" : "1d",
+              }
+            );
+            let updateParams = {
+              TableName: "Users",
+              Key: {
+                personalEmail: req.body.email,
+              },
+              UpdateExpression: "set accessToken = :a",
+              ExpressionAttributeValues: {
+                ":a": accessToken,
+              },
+              ReturnValues: "ALL_NEW",
+            };
+            docClient.update(updateParams, function (err, data) {
+              if (err) {
+                res.status(200).json({
+                  error: "Some error occured",
+                });
+              } else {
+                res.status(200).json({
+                  user: { ...data.Attributes },
+                });
+              }
+            });
+          } else {
+            res.status(200).json({
+              error: "Invalid email/password combination",
+            });
+          }
+        } else {
+          res.status(200).json({
+            error: "You do not have an account. Kindly Signup",
+          });
+        }
+      }
+    });
+  } catch (err) {
+    next({ status: 400 });
+  }
+};
+
+exports.isAuthenticated = (req, res, next) => {
+  try {
+    if (req.headers.authorization) {
+      const accessToken = req.headers.authorization.split(" ")[1];
+      const email = jwt.verify(accessToken, process.env.JWT_SECRET).email;
+      let params = {
+        TableName: "Users",
+        Key: {
+          personalEmail: email,
+        },
+      };
+      docClient.get(params, function (err, data) {
+        if (err) {
+          res.status(200).json({
+            error: "Some error occured",
+          });
+        } else {
+          if (data && data.Item && data.Item.accessToken === accessToken) {
+            req.email = email;
+            next();
+          } else {
+            res.status(401).json({ error: "Unauthorized" });
+          }
+        }
       });
     } else {
-      if (data && data.Item) {
-        const hash = "hash";// will be replaced by function soon
-        if (
-          data.Item.passwordLess === false &&
-          data.Item.hashPassword === hash
-        ) {
+      res.status(401).json({ error: "Unauthorized" });
+    }
+  } catch (err) {
+    next({ status: 400 });
+  }
+};
+
+exports.logout = (req, res) => {
+  try {
+    let updateParams = {
+      TableName: "Users",
+      Key: {
+        personalEmail: req.email,
+      },
+      UpdateExpression: "set accessToken = :a",
+      ExpressionAttributeValues: {
+        ":a": "",
+      },
+      ReturnValues: "NONE",
+    };
+    docClient.update(updateParams, function (err, data) {
+      if (err) {
+        res.status(200).json({
+          error: "Some error occured",
+        });
+      } else {
+        res.status(200).json({
+          success: "Logged Out Successfully",
+        });
+      }
+    });
+  } catch (err) {
+    next({ status: 400 });
+  }
+};
+
+exports.loginWithLinkedIn = async (req, res, next) => {
+  try {
+    let auth = "Bearer " + req.body.accessToken;
+    const userEmail = await axios.get(
+      "https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))",
+      {
+        method: "GET",
+        headers: { Connection: "Keep-Alive", Authorization: auth },
+      }
+    );
+    const email = userEmail.data.elements[0]["handle~"].emailAddress;
+    let params = {
+      TableName: "Users",
+      Key: {
+        personalEmail: email,
+      },
+    };
+    docClient.get(params, function (err, data) {
+      if (err) {
+        res.status(200).json({
+          error: "Some error occured",
+        });
+      } else {
+        if (data && data.Item) {
           const accessToken = jwt.sign(
-            { email: req.body.email },
+            { email: email },
             process.env.JWT_SECRET,
             {
               expiresIn: req.body.remember === true ? "30d" : "1d",
@@ -86,7 +227,7 @@ exports.loginWithPassword = (req, res) => {
           let updateParams = {
             TableName: "Users",
             Key: {
-              personalEmail: req.body.email,
+              personalEmail: email,
             },
             UpdateExpression: "set accessToken = :a",
             ExpressionAttributeValues: {
@@ -107,68 +248,12 @@ exports.loginWithPassword = (req, res) => {
           });
         } else {
           res.status(200).json({
-            error: "Invalid email/password combination",
+            error: "You do not have an account. Kindly Signup",
           });
-        }
-      } else {
-        res.status(200).json({
-          error: "You do not have an account. Kindly Signup",
-        });
-      }
-    }
-  });
-};
-
-exports.isAuthenticated = (req, res, next) => {
-  if (req.headers.authorization) {
-    const accessToken = req.headers.authorization.split(" ")[1];
-    const email = jwt.verify(accessToken, process.env.JWT_SECRET).email;
-    let params = {
-      TableName: "Users",
-      Key: {
-        personalEmail: email,
-      },
-    };
-    docClient.get(params, function (err, data) {
-      if (err) {
-        res.status(200).json({
-          error: "Some error occured",
-        });
-      } else {
-        if (data && data.Item && data.Item.accessToken === accessToken) {
-          req.email = email;
-          next();
-        } else {
-          res.status(401).json({ error: "Unauthorized" });
         }
       }
     });
-  } else {
-    res.status(401).json({ error: "Unauthorized" });
+  } catch (err) {
+    next({ status: 401 });
   }
-};
-
-exports.logout = (req, res) => {
-  let updateParams = {
-    TableName: "Users",
-    Key: {
-      personalEmail: req.email,
-    },
-    UpdateExpression: "set accessToken = :a",
-    ExpressionAttributeValues: {
-      ":a": "",
-    },
-    ReturnValues: "NONE",
-  };
-  docClient.update(updateParams, function (err, data) {
-    if (err) {
-      res.status(200).json({
-        error: "Some error occured",
-      });
-    } else {
-      res.status(200).json({
-        success: "Logged Out Successfully",
-      });
-    }
-  });
 };
