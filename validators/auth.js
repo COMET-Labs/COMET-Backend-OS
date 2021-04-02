@@ -63,6 +63,17 @@ exports.validateLoginWithPassword = [
   .withMessage("Remember must be a Boolean")
 ]
 
+exports.validateLoginWithLinkedIn = [
+  check("accessToken")
+  .notEmpty()
+  .withMessage("AccessToken is Required"),
+  check("remember")
+  .notEmpty()
+  .withMessage("Rembeber is required")
+  .isBoolean()
+  .withMessage("Remember must be a Boolean")
+]
+
 exports.isRequestValidated = (req, res, next) => {
   const errors = validationResult(req);
   if (errors.array().length > 0) {
